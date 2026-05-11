@@ -268,11 +268,7 @@ jobs:
         echo "packages: ${packages[*]}"
 
         if [[ "${#packages[@]}" -gt 0 ]]; then
-          echo "export VERBOSE=1"
-          export VERBOSE=1
-          ./scripts/run-docker.sh -d ./build-package.sh -I -C -a "${{ matrix.target_arch }}" "${packages[@]}"
-          echo "unset VERBOSE"
-          unset VERBOSE
+          ./scripts/run-docker.sh -d ./build-package.sh -I -C -Q -a "${{ matrix.target_arch }}" "${packages[@]}"
         fi
 
     - name: Generate build artifacts
