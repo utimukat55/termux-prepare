@@ -18,6 +18,7 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DGGML_VULKAN=ON
 -DGGML_VULKAN_SHADERS_GEN_TOOLCHAIN=$TERMUX_PKG_BUILDER_DIR/host-toolchain.cmake
 -DGGML_OPENCL=ON
+-DCMAKE_VERBOSE_MAKEFILE=ON
 "
 
 # XXX: llama.cpp uses `int64_t`, but on 32-bit Android `size_t` is `int32_t`.
