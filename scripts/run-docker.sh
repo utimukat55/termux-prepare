@@ -9,6 +9,9 @@ TERMUX_SCRIPTDIR=$(cd "$(realpath "$(dirname "$0")")"; cd ..; pwd)
 BUILDSCRIPT_NAME=build-package.sh
 CONTAINER_HOME_DIR=/home/builder
 
+export CMAKE_EXPORT_COMPILE_COMMANDS=ON
+export CMAKE_VERBOSE_MAKEFILE=ON
+
 _show_usage() {
 	echo "Usage: $0 [OPTIONS] [COMMAND]"
 	echo ""
