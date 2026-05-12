@@ -55,7 +55,6 @@ termux_step_configure_cmake() {
 		-DBUILD_TESTING=OFF \
 		"${CMAKE_ADDITIONAL_ARGS[@]}" \
 		$TERMUX_PKG_EXTRA_CONFIGURE_ARGS \
-		-v \
 		|| (termux_step_configure_cmake_failure_hook && false)
 }
 

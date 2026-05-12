@@ -1,0 +1,33 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -2,6 +2,29 @@
+ project("llama.cpp" C CXX)
+ include(CheckIncludeFileCXX)
+ 
++if (CMAKE_GENERATOR MATCHES "^Ninja$")
++    set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL
++        "Show full compile command line when using Ninja")
++    add_custom_target(show_compile_flags
++        COMMENT "=== C/C++ compile flags for the whole project ==="
++        COMMAND ${CMAKE_COMMAND} -E echo ""
++        COMMAND ${CMAKE_COMMAND} -E echo "=== Global compile flags ==="
++        COMMAND ${CMAKE_COMMAND} -E echo "CMAKE_C_FLAGS   = ${CMAKE_C_FLAGS}"
++        COMMAND ${CMAKE_COMMAND} -E echo "CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}"
++        COMMAND ${CMAKE_COMMAND} -E echo ""
++
++        COMMAND ${CMAKE_COMMAND} -E echo "=== Target: llama ==="
++        COMMAND ${CMAKE_COMMAND} -E echo "  COMPILE_OPTIONS   = $<TARGET_PROPERTY:llama,COMPILE_OPTIONS>"
++        COMMAND ${CMAKE_COMMAND} -E echo "  COMPILE_DEFINITIONS = $<TARGET_PROPERTY:llama,COMPILE_DEFINITIONS>"
++        COMMAND ${CMAKE_COMMAND} -E echo ""
++
++        COMMAND ${CMAKE_COMMAND} -E echo "=== Target: llama-common (if built) ==="
++        COMMAND ${CMAKE_COMMAND} -E echo "  COMPILE_OPTIONS   = $<TARGET_PROPERTY:llama-common,COMPILE_OPTIONS>"
++        COMMAND ${CMAKE_COMMAND} -E echo "  COMPILE_DEFINITIONS = $<TARGET_PROPERTY:llama-common,COMPILE_DEFINITIONS>"
++        COMMAND ${CMAKE_COMMAND} -E echo ""
++    )
++endif()
++
+ #set(CMAKE_WARN_DEPRECATED YES)
+ set(CMAKE_WARN_UNUSED_CLI YES)
+ 
+
