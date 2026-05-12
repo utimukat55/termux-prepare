@@ -82,6 +82,7 @@ termux_step_pre_configure() {
 		_libvulkan="${TERMUX_STANDALONE_TOOLCHAIN}/sysroot/usr/lib/${TERMUX_HOST_PLATFORM}/28/libvulkan.so"
 	fi
 	TERMUX_PKG_EXTRA_CONFIGURE_ARGS+=" -DVulkan_LIBRARY=${_libvulkan}"
+	TERMUX_PKG_EXTRA_CONFIGURE_ARGS+=" -- -v"
 }
 
 termux_step_post_make_install() {
