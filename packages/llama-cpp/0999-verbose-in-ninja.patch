@@ -1,9 +1,13 @@
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -2,6 +2,29 @@
+@@ -2,6 +2,33 @@
  project("llama.cpp" C CXX)
  include(CheckIncludeFileCXX)
  
++COMMAND ${CMAKE_COMMAND} -E echo ""
++COMMAND ${CMAKE_COMMAND} -E echo "=== ADD flags on CMakeLists.txt ==="
++COMMAND ${CMAKE_COMMAND} -E echo ""
++
 +if (CMAKE_GENERATOR MATCHES "^Ninja$")
 +    set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL
 +        "Show full compile command line when using Ninja")
@@ -30,4 +34,3 @@
  #set(CMAKE_WARN_DEPRECATED YES)
  set(CMAKE_WARN_UNUSED_CLI YES)
  
-
