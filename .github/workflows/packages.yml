@@ -41,6 +41,12 @@ jobs:
     strategy:
       matrix:
         target_arch: [aarch64, arm, i686, x86_64]
+        ggmlflag_safe: [default, i8mmbf16dotprod]
+        include:
+          - ggmlflag_safe: default
+            GGML_CONFIGURE_ARGS: ""
+          - ggmlflag_safe: i8mmbf16dotprod
+            GGML_CONFIGURE_ARGS: "-DGGML_ARM_I8MM=ON -DGGML_ARM_BF16=ON -DGGML_ARM_DOTPROD=ON"
       fail-fast: false
     steps:
     - name: Clone repository
@@ -256,6 +262,8 @@ jobs:
 
     - name: Build packages
       if: ${{ steps.build-info.outputs.skip-building != 'true' }}
+      env:
+        GGML_CONFIGURE_ARGS: ${{ matrix.GGML_CONFIGURE_ARGS }}
       run: |
         declare -a packages=()
         for repo_path in $(jq --raw-output 'del(.pkg_format) | keys | .[]' repo.json); do

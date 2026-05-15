@@ -26,6 +26,10 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 # XXX: I don't think it will work if we simply casting it.
 TERMUX_PKG_EXCLUDED_ARCHES="arm, i686, x86_64"
 
+if [[ -n "${GGML_CONFIGURE_ARGS:-}" ]]; then
+	TERMUX_PKG_EXTRA_CONFIGURE_ARGS="${TERMUX_PKG_EXTRA_CONFIGURE_ARGS} ${GGML_CONFIGURE_ARGS}"
+fi
+
 # This auto update function throttles the update frequency
 # of the package to set `$update_interval`, this is useful
 # for packages that make very frequent tags like `jackett`
