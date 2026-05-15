@@ -48,6 +48,8 @@ jobs:
           - ggmlflag_safe: i8mmbf16dotprod
             GGML_CONFIGURE_ARGS: "-DGGML_ARM_I8MM=ON -DGGML_ARM_BF16=ON -DGGML_ARM_DOTPROD=ON"
       fail-fast: false
+    env:
+      GGML_CONFIGURE_ARGS: ${{ matrix.GGML_CONFIGURE_ARGS }}
     steps:
     - name: Clone repository
       uses: actions/checkout@v6
