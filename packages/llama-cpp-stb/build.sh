@@ -9,6 +9,7 @@ TERMUX_PKG_REPOLOGY_METADATA_VERSION="${TERMUX_PKG_VERSION#*-}"
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_DEPENDS="libandroid-spawn, libc++, libcurl"
 TERMUX_PKG_BUILD_DEPENDS="ocl-icd, opencl-headers, spirv-headers, vulkan-headers"
+TERMUX_PKG_CONFLICTS="llama-cpp"
 TERMUX_PKG_SUGGESTS="llama-cpp-stb-backend-vulkan, llama-cpp-stb-backend-opencl"
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DBUILD_SHARED_LIBS=ON
