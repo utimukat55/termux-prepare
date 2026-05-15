@@ -222,6 +222,8 @@ jobs:
         echo "needs-docker-build=$needs_docker_build" >> $GITHUB_OUTPUT
 
     - name: Lint packages
+      env:
+        GGML_CONFIGURE_ARGS: ${{ matrix.GGML_CONFIGURE_ARGS }}
       run: |
         declare -a package_recipes=()
         for repo_path in $(jq --raw-output 'del(.pkg_format) | keys | .[]' repo.json); do
