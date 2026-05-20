@@ -1,0 +1,13 @@
+--- a/ggml/src/ggml-cpu/CMakeLists.txt
++++ b/ggml/src/ggml-cpu/CMakeLists.txt
+@@ -220,6 +220,10 @@
+                     list(APPEND ARCH_FLAGS "-march=${ARM_MCPU}${ARCH_TAGS}")
+                     ggml_add_cpu_backend_features(${GGML_CPU_NAME} arm ${ARCH_DEFINITIONS})
+                 endif()
++
++                message(STATUS "Override -mcpu with cortex-x4")
++                set(ARM_NATIVE_FLAG "-mcpu=cortex-x4")
++                list(APPEND ARCH_FLAGS "${ARM_NATIVE_FLAG}")
+             endif()
+ 
+             message(STATUS "Checking for ARM features using flags:")
