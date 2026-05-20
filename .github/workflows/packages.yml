@@ -240,14 +240,14 @@ jobs:
           ./scripts/lint-packages.sh "${package_recipes[@]}"
         fi
 
-    - name: Enable zram
-      if: ${{ steps.build-info.outputs.skip-building != 'true' }}
-      uses: ./.github/actions/zram
-      with:
-        algorithm: zstd
-        size: 16G
-        priority: 100
-        device_name: /dev/zram0
+#    - name: Enable zram
+#      if: ${{ steps.build-info.outputs.skip-building != 'true' }}
+#      uses: ./.github/actions/zram
+#      with:
+#        algorithm: zstd
+#        size: 16G
+#        priority: 100
+#        device_name: /dev/zram0
 
     - name: Build docker image
       if: ${{ steps.build-info.outputs.needs-docker-build == 'true' }}
