@@ -39,6 +39,7 @@ jobs:
       contents: read # actions/upload-artifact doesn't need contents: write
     runs-on: ubuntu-24.04
     strategy:
+      max-parallel: 4
       matrix:
         target_arch: [aarch64, arm, i686, x86_64]
         ggmlflag_safe: [default, i8mmbf16dotprod]
