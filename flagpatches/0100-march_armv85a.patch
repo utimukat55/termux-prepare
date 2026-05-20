@@ -1,0 +1,14 @@
+--- a/ggml/src/ggml-cpu/CMakeLists.txt
++++ b/ggml/src/ggml-cpu/CMakeLists.txt
+@@ -219,6 +219,11 @@
+                     endif()
+                     list(APPEND ARCH_FLAGS "-march=${ARM_MCPU}${ARCH_TAGS}")
+                     ggml_add_cpu_backend_features(${GGML_CPU_NAME} arm ${ARCH_DEFINITIONS})
++                else()
++                    message(STATUS "Override -march with armv8.5-a")
++                    set(ARM_MCPU "armv8.5-a")
++                    #set(ARCH_TAGS "${ARCH_TAGS}+dotprod")
++                    #list(APPEND ARCH_DEFINITIONS GGML_USE_DOTPROD)
+                 endif()
+             endif()
+ 

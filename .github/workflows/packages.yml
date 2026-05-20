@@ -43,13 +43,8 @@ jobs:
       matrix:
 #        target_arch: [aarch64, arm, i686, x86_64]
         target_arch: [aarch64]
-        ggmlflag_safe: [default, i8mmbf16dotprod]
-        socflag: [Cortex-X1, Cortex-X2, Cortex-X3, Cortex-X4]
+        socflag: [Cortex-X1, Cortex-X2, Cortex-X3, Cortex-X4, Armv8.3-A, Armv8.4-A, Armv8.5-A, Armv8.6-A, Armv8.7-A]
         include:
-          - ggmlflag_safe: default
-            GGML_CONFIGURE_ARGS: ""
-          - ggmlflag_safe: i8mmbf16dotprod
-            GGML_CONFIGURE_ARGS: "-DGGML_ARM_I8MM=ON -DGGML_ARM_BF16=ON -DGGML_ARM_DOTPROD=ON"
           - socflag: Cortex-X1
             ARCHFLAG: "mcpu_c_x1"
           - socflag: Cortex-X2
@@ -58,9 +53,18 @@ jobs:
             ARCHFLAG: "mcpu_c_x3"
           - socflag: Cortex-X4
             ARCHFLAG: "mcpu_c_x4"
+          - socflag: Armv8.3-A
+            ARCHFLAG: "march_armv83a"
+          - socflag: Armv8.4-A
+            ARCHFLAG: "march_armv84a"
+          - socflag: Armv8.5-A
+            ARCHFLAG: "march_armv85a"
+          - socflag: Armv8.6-A
+            ARCHFLAG: "march_armv86a"
+          - socflag: Armv8.7-A
+            ARCHFLAG: "march_armv87a"
+
       fail-fast: false
-    env:
-      GGML_CONFIGURE_ARGS: ${{ matrix.GGML_CONFIGURE_ARGS }}
     steps:
     - name: Clone repository
       uses: actions/checkout@v6
@@ -244,8 +248,6 @@ jobs:
         echo "needs-docker-build=$needs_docker_build" >> $GITHUB_OUTPUT
 
     - name: Lint packages
-      env:
-        GGML_CONFIGURE_ARGS: ${{ matrix.GGML_CONFIGURE_ARGS }}
       run: |
         declare -a package_recipes=()
         for repo_path in $(jq --raw-output 'del(.pkg_format) | keys | .[]' repo.json); do
@@ -286,8 +288,6 @@ jobs:
 
     - name: Build packages
       if: ${{ steps.build-info.outputs.skip-building != 'true' }}
-      env:
-        GGML_CONFIGURE_ARGS: ${{ matrix.GGML_CONFIGURE_ARGS }}
       run: |
         declare -a packages=()
         for repo_path in $(jq --raw-output 'del(.pkg_format) | keys | .[]' repo.json); do
