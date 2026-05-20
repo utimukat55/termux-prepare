@@ -41,13 +41,23 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        target_arch: [aarch64, arm, i686, x86_64]
+#        target_arch: [aarch64, arm, i686, x86_64]
+        target_arch: [aarch64]
         ggmlflag_safe: [default, i8mmbf16dotprod]
+        socflag: [Cortex-X1, Cortex-X2, Cortex-X3, Cortex-X4]
         include:
           - ggmlflag_safe: default
             GGML_CONFIGURE_ARGS: ""
           - ggmlflag_safe: i8mmbf16dotprod
             GGML_CONFIGURE_ARGS: "-DGGML_ARM_I8MM=ON -DGGML_ARM_BF16=ON -DGGML_ARM_DOTPROD=ON"
+          - socflag: Cortex-X1
+            ARCHFLAG: "mcpu_c_x1"
+          - socflag: Cortex-X2
+            ARCHFLAG: "mcpu_c_x2"
+          - socflag: Cortex-X3
+            ARCHFLAG: "mcpu_c_x3"
+          - socflag: Cortex-X4
+            ARCHFLAG: "mcpu_c_x4"
       fail-fast: false
     env:
       GGML_CONFIGURE_ARGS: ${{ matrix.GGML_CONFIGURE_ARGS }}
@@ -56,6 +66,15 @@ jobs:
       uses: actions/checkout@v6
       with:
         fetch-depth: 1000
+
+    - name: Preparetion patches
+      env:
+      ARCHFLAG: ${{ matrix.ARCHFLAG }}
+      id: copy-patch
+      run: |
+# runs only llama-cpp-stb
+        cp flagpatches/0100-${{ env.ARCHFLAG }}.patch packages/llama-cpp-stb/
+        ls -lR packages/llama-cpp-stb/*
 
     - name: Gather build summary
       id: build-info
