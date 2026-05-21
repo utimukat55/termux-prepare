@@ -43,7 +43,7 @@ jobs:
       matrix:
 #        target_arch: [aarch64, arm, i686, x86_64]
         target_arch: [aarch64]
-        socflag: [Cortex-X1, Cortex-X2, Cortex-X3, Cortex-X4, Armv8.3-A, Armv8.4-A, Armv8.5-A, Armv8.6-A, Armv8.7-A]
+        socflag: [Cortex-X1, Cortex-X2, Cortex-X3, Cortex-X4, Cortex-X4noSVE, Armv8.3-A, Armv8.4-A, Armv8.5-A, Armv8.6-A, Armv8.7-A, Armv9-A]
         include:
           - socflag: Cortex-X1
             ARCHFLAG: "mcpu_c_x1"
@@ -53,6 +53,8 @@ jobs:
             ARCHFLAG: "mcpu_c_x3"
           - socflag: Cortex-X4
             ARCHFLAG: "mcpu_c_x4"
+          - socflag: Cortex-X4noSVE
+            ARCHFLAG: "mcpu_c_x4nosve"
           - socflag: Armv8.3-A
             ARCHFLAG: "march_armv83a"
           - socflag: Armv8.4-A
@@ -63,6 +65,8 @@ jobs:
             ARCHFLAG: "march_armv86a"
           - socflag: Armv8.7-A
             ARCHFLAG: "march_armv87a"
+          - socflag: Armv9-A
+            ARCHFLAG: "march_armv9a"
 
       fail-fast: false
     steps:

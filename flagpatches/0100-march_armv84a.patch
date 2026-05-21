@@ -1,6 +1,6 @@
 --- a/ggml/src/ggml-cpu/CMakeLists.txt
 +++ b/ggml/src/ggml-cpu/CMakeLists.txt
-@@ -219,6 +219,11 @@
+@@ -219,6 +219,12 @@
                      endif()
                      list(APPEND ARCH_FLAGS "-march=${ARM_MCPU}${ARCH_TAGS}")
                      ggml_add_cpu_backend_features(${GGML_CPU_NAME} arm ${ARCH_DEFINITIONS})
@@ -9,6 +9,7 @@
 +                    set(ARM_MCPU "armv8.4-a")
 +                    #set(ARCH_TAGS "${ARCH_TAGS}+dotprod")
 +                    #list(APPEND ARCH_DEFINITIONS GGML_USE_DOTPROD)
++                    list(APPEND ARCH_FLAGS "-march=${ARM_MCPU}${ARCH_TAGS}")
                  endif()
              endif()
  
