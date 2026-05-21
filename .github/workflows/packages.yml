@@ -308,10 +308,33 @@ jobs:
         fi
 
     - name: Generate build artifacts
+      env:
+        ARCHFLAG: ${{ matrix.ARCHFLAG }}
       if: always()
       run: |
         test -d termux-packages/output && mv termux-packages/output/* ./output/
 
+        rename_deb() {
+          local src="$1"                         # /path/to/file.deb
+          local dir="${src%/*}"                  # /path/to
+          local fname="${src##*/}"               # llama-cpp_0.0.0-b8969-0_aarch64.deb
+
+          # 1. 拡張子は .deb のみ想定
+          local ext="${fname##*.}"               # deb
+          local base="${fname%.*}"                # llama-cpp_0.0.0-b8969-0_aarch64
+
+          # 2. 最後の _<arch> 部分を取り出す
+          #    例: base = llama-cpp_0.0.0-b8969-0_aarch64
+          #        arch = aarch64
+          #        prefix = llama-cpp_0.0.0-b8969-0
+          local arch="${base##*_}"               # aarch64
+          local prefix="${base%_*}"              # llama-cpp_0.0.0-b8969-0
+
+          # 3. 新しい名前を作る
+          local newname="${prefix}_${{ env.ARCHFLAG }}_${arch}.${ext}"
+          echo "${dir}/${newname}"
+        }
+        
         for repo in $(jq --raw-output 'del(.pkg_format) | .[].name' repo.json); do
           # Put package lists into directory with *.deb files so they will be transferred to
           # upload job.
@@ -325,29 +348,44 @@ jobs:
           if [ -f "./debs/built_${repo}_packages.txt" ] && [ -d "output" ]; then
             while read -r pkg; do
               # Match both $pkg.deb and $pkg-static.deb.
-              find output \( -name "$pkg_*.deb" -o -name "$pkg-static_*.deb" \) -type f -print0 | xargs -0r mv -t debs/
+              find output \( -name "$pkg_*.deb" -o -name "$pkg-static_*.deb" \) -type f -print0 | 
+                while IFS= read -r -d '' deb_path; do
+                  # rename してから debs/ へ搬入
+                  new_path=$(rename_deb "$deb_path")
+                  mv "$deb_path" "$new_path"
+                  mv "$new_path" debs/
+                done
             done < <(cat "./debs/built_${repo}_packages.txt")
+            
+            sed -i -E "s|(_[a-z0-9]+)(\.deb)$|_\${{ env.ARCHFLAG }}\1\2|g" \
+                "./debs/built_${repo}_packages.txt"
           fi
         done
 
         # Files containing certain symbols (e.g. ":") will cause failure in actions/upload-artifact.
         # Archiving *.deb files in a tarball to avoid issues with uploading.
-        tar cf artifacts/debs-${{ matrix.target_arch }}-${{ github.sha }}.tar debs
+        tar cf artifacts/debs_${{ env.ARCHFLAG }}-${{ matrix.target_arch }}-${{ github.sha }}.tar debs
     - name: Checksums for built *.deb files
+      env:
+        ARCHFLAG: ${{ matrix.ARCHFLAG }}
       if: always()
       run: |
-        find debs -type f -name "*.deb" -exec sha256sum "{}" \; | sort -k2 | tee checksum-${{ matrix.target_arch }}-${{ github.sha }}.txt
+        find debs -type f -name "*.deb" -exec sha256sum "{}" \; | sort -k2 | tee checksum_${{ env.ARCHFLAG }}-${{ matrix.target_arch }}-${{ github.sha }}.txt
     - name: Store checksums for built *.deb files
+      env:
+        ARCHFLAG: ${{ matrix.ARCHFLAG }}
       if: always()
       uses: actions/upload-artifact@v6
       with:
-        name: checksum-${{ matrix.target_arch }}-${{ github.sha }}
-        path: checksum-${{ matrix.target_arch }}-${{ github.sha }}.txt
+        name: checksum_${{ env.ARCHFLAG }}-${{ matrix.target_arch }}-${{ github.sha }}
+        path: checksum_${{ env.ARCHFLAG }}-${{ matrix.target_arch }}-${{ github.sha }}.txt
     - name: Store *.deb files
+      env:
+        ARCHFLAG: ${{ matrix.ARCHFLAG }}
       if: always()
       uses: actions/upload-artifact@v6
       with:
-        name: debs-${{ matrix.target_arch }}-${{ github.sha }}
+        name: debs_${{ env.ARCHFLAG }}-${{ matrix.target_arch }}-${{ github.sha }}
         path: ./artifacts
     - name: AppArmor Logs
       if: always()
