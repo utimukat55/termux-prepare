@@ -375,7 +375,7 @@ jobs:
       env:
         ARCHFLAG: ${{ matrix.ARCHFLAG }}
       if: always()
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: checksum_${{ env.ARCHFLAG }}-${{ matrix.target_arch }}-${{ github.sha }}
         path: checksum_${{ env.ARCHFLAG }}-${{ matrix.target_arch }}-${{ github.sha }}.txt
@@ -383,7 +383,7 @@ jobs:
       env:
         ARCHFLAG: ${{ matrix.ARCHFLAG }}
       if: always()
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: debs_${{ env.ARCHFLAG }}-${{ matrix.target_arch }}-${{ github.sha }}
         path: ./artifacts
