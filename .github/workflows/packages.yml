@@ -84,16 +84,22 @@ jobs:
     - name: Preparetion patches
       env:
         ARCHFLAG: ${{ matrix.ARCHFLAG }}
+        MANUAL_INPUT_PACKAGES: ${{ github.event.inputs.packages }}
       id: copy-patch
       run: |
         
         declare -a packages=()
-        for repo_path in $(jq --raw-output 'del(.pkg_format) | keys | .[]' repo.json); do
-          repo=$(jq --raw-output '.["'${repo_path}'"].name' repo.json)
-          if [ -f "./built_${repo}_packages.txt" ]; then
-            packages+=($(cat "./built_${repo}_packages.txt"))
-          fi
-        done
+        if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+          for repo_path in $(jq --raw-output 'del(.pkg_format) | keys | .[]' repo.json); do
+            repo=$(jq --raw-output '.["'${repo_path}'"].name' repo.json)
+            if [ -f "./built_${repo}_packages.txt" ]; then
+              packages+=($(cat "./built_${repo}_packages.txt"))
+            fi
+          done
+        else
+          # use MANUAL_INPUT_PACKAGES
+          read -a packages <<< "${MANUAL_INPUT_PACKAGES//$'\n'/ }"
+        fi
 
         echo "packages: ${packages[*]}"
 
