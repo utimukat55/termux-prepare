@@ -80,9 +80,23 @@ jobs:
         ARCHFLAG: ${{ matrix.ARCHFLAG }}
       id: copy-patch
       run: |
-        # runs only llama-cpp-stb
-        cp flagpatches/0100-${{ env.ARCHFLAG }}.patch packages/llama-cpp-stb/
-        ls -lR packages/llama-cpp-stb/*
+        
+        declare -a packages=()
+        for repo_path in $(jq --raw-output 'del(.pkg_format) | keys | .[]' repo.json); do
+          repo=$(jq --raw-output '.["'${repo_path}'"].name' repo.json)
+          if [ -f "./built_${repo}_packages.txt" ]; then
+            packages+=($(cat "./built_${repo}_packages.txt"))
+          fi
+        done
+
+        echo "packages: ${packages[*]}"
+
+        if [[ "${#packages[@]}" -gt 0 ]]; then
+          for pkg in "${packages[@]}"; do
+            cp packages/"$pkg"/flagpatches/0100-${{ env.ARCHFLAG }}.patch packages/"$pkg"/
+            ls -lR packages/"$pkg"/*
+          done
+        fi
 
     - name: Gather build summary
       id: build-info
